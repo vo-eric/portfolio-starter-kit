@@ -1,0 +1,15 @@
+---
+title: 'How a Simple Thought Can Lead to Scope Creep'
+publishedAt: '2025-06-07'
+summary: 'In the ever-evolving landscape of software development, the debate between dynamic and static typing continues to be a hot topic.'
+---
+
+This week I had to implement a simple game of Connect 4. As the week progressed the complexity and scope of the project unsurprisingly grew and eventually the question of how to reset or start a new game. I came up with two solutions. Either I:
+
+1. overwrite the existing game in our database to essentially reset the game (set the board to empty, reset the current player, etc).
+
+2. create a new game in our database and route the players in the room into that new game
+
+Initially it seemed like the first option would the simplest and the least obstructive to the players in the room. Naturally, further questions came up. If we're going to reset the game state does that make the current game a lobby? If the game is now a lobby should we have a history of games? If there is a history of games should there be a move history?
+
+In the end, what started as a technical decision turned into a broader consideration about structure and user experience. It was a helpful reminder that even small implementation choices can influence the overall design and feel of an application.
