@@ -1,0 +1,72 @@
+I feel like there is an overreliance on using JavaScript to get things done on the frontend, especially when it comes to
+applying certain styles to elements. To illustrate my point here's an example from the project I worked on this week. The
+idea was to have sections that would expand and collapse when clicked upon. Initially, I had something like:
+
+```
+
+[selectedStyle, setSelectedStyle] = useState<string | undefined>()
+
+.
+.
+.
+
+<div
+  key={style.style}
+  onClick={() => setSelectedStyle(style.style)}
+  className={`selectedStyle === style.style ? "expanded" : "collapsed`}
+  >
+  <p>{style.style}</p>
+  <p>
+    ...some details
+  </p>
+</div>
+
+```
+
+I don't think I'm alone in taking this approach and this would be totally fine!
+
+But do we NEED to do it this way?
+
+When implementing this I remembered there was a HTML element that had similar functionality.
+After firing a quick question to ChatGPT I was reminded that it was the `<details>` element.
+Unsure about whether the expansion/collapse could be animated, I went to the almighty Google
+and was presented with a video by Kevin Powell (my CSS GOAT). Turns out that not only could
+we transition the expansion/collapse, we could do it purely in CSS! Here's the relevant CSS
+that does this:
+
+```
+
+:root {
+  interpolate-size: allow-keywords;
+}
+
+details {
+  overflow: hidden;
+}
+
+details::details-content {
+  display: block;
+  block-size: 0;
+  transition-property: block-size 0.3s ease-in-out;
+  transition-duration: 0.3s;
+  transition-behavior: allow-discrete;
+}
+
+details[open]::details-content {
+  block-size: auto;
+  block-size: calc-size(auto, size);
+}
+
+```
+
+According to MDN, `interpolate-size` enables animations and transitions between a length-percentage value
+and an intrinsic size value such as auto, fit-content, or max-content. This is where the magic happens.
+We hide the overflow so the "collapsed" text doesn't show. To select the text in the details element we use
+the `::details-content` psuedo element. Thanks to `interpolate-size` we can transition on the content's block
+size and we add `transition-behavior: allow-discrete` to allow the transition to also apply on the collapse.
+If you want to get fancier and only have one detail expanded at once add `name=...` to the details element.
+Voila!
+
+Note that most of this styling isn't widely adopted. At the moment Firefox does not support most of these features,
+but that's okay as a lot of this styling is suited for progressive enhancement. Until then, the details will pop in and out
+instantly.
